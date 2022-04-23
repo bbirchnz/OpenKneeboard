@@ -19,6 +19,7 @@
  */
 #pragma once
 
+#include <OpenKneeboard/ButtonTestTab.h>
 #include <OpenKneeboard/DCSAircraftTab.h>
 #include <OpenKneeboard/DCSMissionTab.h>
 #include <OpenKneeboard/DCSRadioLogTab.h>
@@ -37,7 +38,8 @@
   IT(_("DCS Aircraft Kneeboard"), DCSAircraft) \
   IT(_("DCS Mission Kneeboard"), DCSMission) \
   IT(_("DCS Radio Log"), DCSRadioLog) \
-  IT(_("DCS Terrain Kneeboard"), DCSTerrain)
+  IT(_("DCS Terrain Kneeboard"), DCSTerrain) \
+  IT(_("Button Test Tab"), ButtonTest)
 
 // If this fails, check that you included the header :)
 #define IT(_, type) \

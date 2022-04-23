@@ -118,6 +118,7 @@ void TabSettingsPage::CreateTab(
       CreateFileBasedTab<TextFileTab>(L".txt");
       return;
   }
+// clang-format off
 #define IT(_, type) \
   if (tabType == TabType::type) { \
     if constexpr (std::constructible_from< \
@@ -126,7 +127,12 @@ void TabSettingsPage::CreateTab(
                     KneeboardState*>) { \
       AddTab(std::make_shared<type##Tab>(gDXResources, gKneeboard.get())); \
       return; \
-    } else { \
+    } \
+    if constexpr (std::constructible_from<type##Tab, DXResources, KneeboardState*>) { \
+      AddTab(std::make_shared<type##Tab>(gDXResources, gKneeboard.get())); \
+      return; \
+    } \
+    else { \
       throw std::logic_error( \
         fmt::format("Don't know how to construct {}Tab", #type)); \
     } \
@@ -136,6 +142,7 @@ void TabSettingsPage::CreateTab(
   throw std::logic_error(
     fmt::format("Unhandled tab type: {}", static_cast<uint8_t>(tabType)));
 }
+// clang-format on
 
 template <class T>
 fire_and_forget TabSettingsPage::CreateFileBasedTab(hstring fileExtension) {

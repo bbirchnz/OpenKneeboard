@@ -1,15 +1,16 @@
 #include <OpenKneeboard/Button.h>
 #include <OpenKneeboard/CursorEvent.h>
+#include <OpenKneeboard/TabState.h>
 
 namespace OpenKneeboard {
 
-Button::Button(
+BaseButton::BaseButton(
   winrt::com_ptr<ID2D1Brush> baseBrush,
   winrt::com_ptr<ID2D1Brush> hoverBrush,
   winrt::com_ptr<ID2D1Brush> activeBrush,
   D2D1_RECT_F buttonBounds,
   KneeboardState* kneeboard,
-  std::shared_ptr<OpenKneeboard::TabState> tab) {
+  Tab* tab) {
   mBaseBrush = baseBrush;
   mHoverBrush = hoverBrush;
   mActiveBrush = activeBrush;
@@ -20,12 +21,27 @@ Button::Button(
   mState = INACTIVE;
 
   // register for events:
-  AddEventListener(kneeboard->evCursorEvent, &Button::OnCursorEvent, this);
+  AddEventListener(kneeboard->evCursorEvent, &BaseButton::OnCursorEvent, this);
+}
+
+void BaseButton::SetEnabledState(bool isEnabled) {
+  if (!isEnabled) {
+    mState = DISABLED;
+    return;
+  }
+  // if its now enabled, return it to inactive state
+  if (mState == DISABLED) {
+    mState = INACTIVE;
+  }
 }
 
 // setup state based on what the cursor is up to, and whether this tab is
 // visible
-void Button::OnCursorEvent(const CursorEvent& ev) {
+void BaseButton::OnCursorEvent(const CursorEvent& ev) {
+  if (mState == DISABLED) {
+    return;
+  }
+
   const auto point = mKneeboard->GetCursorCanvasPoint({ev.mX, ev.mY});
   const bool pointInButton = point.x >= mButtonBounds.left
     && point.x <= mButtonBounds.right && point.y >= mButtonBounds.left
@@ -37,7 +53,7 @@ void Button::OnCursorEvent(const CursorEvent& ev) {
   // if not in our button:
   if (!pointInButton) {
     mState = INACTIVE;
-    return;
+    ev return;
   }
 
   if (pointInButton && !touchingAnySurface) {
@@ -55,14 +71,13 @@ void Button::OnCursorEvent(const CursorEvent& ev) {
   }
 }
 
-void Button::Render(winrt::com_ptr<ID2D1DeviceContext> ctx) {
-  winrt::com_ptr<ID2D1Brush> brush;
-
-  // will be drawn either If our tab visible, or tab==null == we're in the
-  // header
-  if (mTab != nullptr && mKneeboard->GetCurrentTab() != mTab) {
+void BaseButton::Render(ID2D1DeviceContext* ctx) {
+  if (mState == DISABLED) {
+    // don't draw, return
     return;
   }
+
+  winrt::com_ptr<ID2D1Brush> brush;
 
   switch (mState) {
     case INACTIVE:
@@ -78,6 +93,6 @@ void Button::Render(winrt::com_ptr<ID2D1DeviceContext> ctx) {
       brush = mBaseBrush;
   }
 
-  RenderButton(ctx, brush);
+  RenderButton(ctx, brush.get());
 }
 }// namespace OpenKneeboard

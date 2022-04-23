@@ -11,29 +11,27 @@
 
 namespace OpenKneeboard {
 
-enum ButtonState { INACTIVE, HOVER, ACTIVE };
+enum ButtonState { DISABLED, INACTIVE, HOVER, ACTIVE };
 
-// Base class for a button -
-class Button : EventReceiver {
+// Abstract Base class for a button
+class BaseButton : EventReceiver {
  public:
-  Button(
+  BaseButton(
     winrt::com_ptr<ID2D1Brush> baseBrush,
     winrt::com_ptr<ID2D1Brush> hoverBrush,
     winrt::com_ptr<ID2D1Brush> activeBrush,
     D2D1_RECT_F buttonBounds,
     KneeboardState* kneeboard,
-    std::shared_ptr<OpenKneeboard::TabState> tab);
+    Tab* tab);
 
-  void Render(winrt::com_ptr<ID2D1DeviceContext> ctx);
+  void Render(ID2D1DeviceContext* ctx);
+  void SetEnabledState(bool isEnabled);
 
   Event<> evButtonClicked;
 
  protected:
   // implement this to actually draw your button with provided brush
-  virtual void RenderButton(
-    winrt::com_ptr<ID2D1DeviceContext> ctx,
-    winrt::com_ptr<ID2D1Brush> brush)
-    = 0;
+  virtual void RenderButton(ID2D1DeviceContext* ctx, ID2D1Brush* brush) = 0;
 
   void OnCursorEvent(const CursorEvent& ev);
 
@@ -43,7 +41,7 @@ class Button : EventReceiver {
   D2D1_RECT_F mButtonBounds;
   bool mIsActive;
   KneeboardState* mKneeboard;
-  std::shared_ptr<OpenKneeboard::TabState> mTab;
+  Tab* mTab;
   ButtonState mState;
 };
 
