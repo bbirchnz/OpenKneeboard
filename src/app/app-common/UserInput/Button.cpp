@@ -42,10 +42,13 @@ void BaseButton::OnCursorEvent(const CursorEvent& ev) {
     return;
   }
 
-  const auto point = mKneeboard->GetCursorCanvasPoint({ev.mX, ev.mY});
+  // not sure why but GetCursorCanvasPoint is all over the place?
+  // const auto point = mKneeboard->GetCursorCanvasPoint({ev.mX, ev.mY});
+  const auto point = mKneeboard->GetCursorPoint();
+
   const bool pointInButton = point.x >= mButtonBounds.left
-    && point.x <= mButtonBounds.right && point.y >= mButtonBounds.left
-    && point.y <= mButtonBounds.right;
+    && point.x <= mButtonBounds.right && point.y >= mButtonBounds.top
+    && point.y <= mButtonBounds.bottom;
 
   bool touchingAnySurface
     = ev.mTouchState == CursorTouchState::TOUCHING_SURFACE;
@@ -53,7 +56,7 @@ void BaseButton::OnCursorEvent(const CursorEvent& ev) {
   // if not in our button:
   if (!pointInButton) {
     mState = INACTIVE;
-    ev return;
+    return;
   }
 
   if (pointInButton && !touchingAnySurface) {

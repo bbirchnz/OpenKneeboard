@@ -3,12 +3,13 @@
 #include <OpenKneeboard/IconButton.h>
 
 #include "OpenKneeboard/DXResources.h"
+#include "OpenKneeboard/Events.h"
 #include "OpenKneeboard/KneeboardState.h"
 #include "Tab.h"
 
 namespace OpenKneeboard {
 
-class ButtonTestTab final : public Tab {
+class ButtonTestTab final : public Tab, EventReceiver {
  public:
   ButtonTestTab(const DXResources& dxr, KneeboardState* kbs);
   virtual utf8_string GetTitle() const override;
@@ -24,6 +25,12 @@ class ButtonTestTab final : public Tab {
   DXResources mDXR;
   KneeboardState* mKneeboard;
   IconButton* mTestButton;
+  IconButton* mTestButton2;
+  winrt::com_ptr<IDWriteTextFormat> mTextFormat;
+  bool mButton1Toggle;
+  bool mButton2Toggle;
+  void Button1Toggle();
+  void Button2Toggle();
 };
 
 }// namespace OpenKneeboard
