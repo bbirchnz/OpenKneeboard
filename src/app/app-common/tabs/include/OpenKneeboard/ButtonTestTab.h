@@ -1,6 +1,7 @@
 #pragma once
 
 #include <OpenKneeboard/IconButton.h>
+#include <OpenKneeboard/TextButton.h>
 
 #include "OpenKneeboard/DXResources.h"
 #include "OpenKneeboard/Events.h"
@@ -26,6 +27,7 @@ class ButtonTestTab final : public Tab, EventReceiver {
   KneeboardState* mKneeboard;
   IconButton* mTestButton;
   IconButton* mTestButton2;
+  TextButton* mTestButton3;
   winrt::com_ptr<IDWriteTextFormat> mTextFormat;
   bool mButton1Toggle;
   bool mButton2Toggle;

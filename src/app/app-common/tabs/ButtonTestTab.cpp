@@ -48,6 +48,18 @@ ButtonTestTab::ButtonTestTab(const DXResources& dxr, KneeboardState* kbs) {
     IconButton::I_CANCEL);
   mTestButton2 = button;
 
+  bounds = {.left = 350, .top = 50, .right = 450, .bottom = 150};
+  mTestButton3 = new TextButton(
+    mButtonBrush,
+    mHoverButtonBrush,
+    mActiveButtonBrush,
+    bounds,
+    mKneeboard,
+    this,
+    mDXR.mDWriteFactory,
+    L"Consolas",
+    L"1");
+
   // setup text format for debugging purposes only:
   mDXR.mDWriteFactory->CreateTextFormat(
     L"Consolas",
@@ -125,6 +137,7 @@ void ButtonTestTab::RenderPage(
 
   mTestButton->Render(ctx);
   mTestButton2->Render(ctx);
+  mTestButton3->Render(ctx);
 
   wchar_t buffer[200];
   auto point = mKneeboard->GetCursorPoint();
